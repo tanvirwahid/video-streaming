@@ -1,19 +1,21 @@
 const fs = require('fs');
 const path = require('path');
 const {request, response} = require("express");
+const videoService = require("../services/videoService");
 
 const getDemoVideo = (request , response) => {
     let videoPath = path.join(__dirname + '/../../public/videos/class4.mp4');
+    console.log(__dirname);
     getFile(request, response, videoPath);
 }
 
+///@todo remove it from export after file fetching mechanism is done
 const getFile = (request, response, videoPath) => {
     let stat = fs.statSync(videoPath);
     let fileSize = stat.size;
     let range = request.headers.range;
-    let parts = range.replace(/bytes=/, '').split('-');
-    let start = parseInt(parts[0], 10);
-    let end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+
+    let {start, end} = videoService.getStartAndEnd(range, fileSize);
 
     if(start >= fileSize )
     {
@@ -38,5 +40,6 @@ const getFile = (request, response, videoPath) => {
 }
 
 module.exports = {
-    getDemoVideo
+    getDemoVideo,
+    getFile
 }
