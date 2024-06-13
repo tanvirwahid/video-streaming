@@ -5,6 +5,9 @@ const bodyParser = require('body-parser');
 const routes = require('./routes/index');
 app.use(bodyParser.json());
 app.use(express.static('public'));
+const cors = require('cors');
+
+app.use(cors());
 
 app.use('/api', routes);
 
