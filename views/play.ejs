@@ -144,15 +144,30 @@
     </div>
 </div>
 <div class="container">
-    <% if (typeof message !== 'undefined')  { %>
-        <h1><%= message %></h1>
-    <% } %>
-    <form action="/api/video/upload" method="POST" enctype="multipart/form-data">
-        <label for="videoFile">Select a video file:</label><br>
-        <input type="file" id="videoFile" name="video" accept="video/*" required><br>
-        <button type="submit">Upload</button>
-    </form>
+    <div class="video-container">
+        <video id="videoPlayer" controls></video>
+    </div>
+    <div class="title">Sample Video Title</div>
+    <div class="description">This is a description of the video. It provides some context and additional information about the video content.</div>
+    <div class="comments-section">
+        <div class="comment">
+            <span class="comment-author">User1:</span>
+            <span class="comment-text">This is a great video!</span>
+        </div>
+        <div class="comment">
+            <span class="comment-author">User2:</span>
+            <span class="comment-text">Very informative, thanks for sharing!</span>
+        </div>
+        <div class="add-comment">
+            <textarea placeholder="Add a public comment..."></textarea>
+            <button type="button">Comment</button>
+        </div>
+    </div>
 </div>
-
+<script>
+    const url = 'http://localhost:3000/api/video-mpd';
+    const player = dashjs.MediaPlayer().create();
+    player.initialize(document.querySelector("#videoPlayer"), url, true);
+</script>
 </body>
 </html>

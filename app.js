@@ -18,7 +18,7 @@ const cors = require('cors');
 app.use(cors());
 
 app.get('/video/upload', frontendController.upload);
-
+app.get('/', frontendController.play);
 
 app.use('/api', routes);
 
