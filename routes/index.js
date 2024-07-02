@@ -10,7 +10,8 @@ router.get('/', (req, res) => {
 });
 
 router.get('/demo-video', videoController.getDemoVideo);
-router.get('/test-mpd', dashMpdController.getFile);
+console.log('url');
+router.get('/video-mpd', dashMpdController.getFile);
 router.get('/video/:segment', dashMpdController.getSegment);
 
 router.post('/video/upload', uploadMiddleware.upload.single('video'), uploadController.uploadVideoFile);
