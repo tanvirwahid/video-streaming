@@ -19,6 +19,8 @@ app.use(cors());
 
 app.get('/video/upload', frontendController.upload);
 app.get('/', frontendController.play);
+app.get('/login', frontendController.login);
+app.get('/register', frontendController.register);
 
 app.use('/api', routes);
 
