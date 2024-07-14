@@ -140,7 +140,7 @@
     <div class="menu">
         <a href="#"><i class="fas fa-home"></i> Home</a>
         <a href="#"><i class="fas fa-video"></i> Videos</a>
-        <a href="#"><i class="fas fa-user"></i> Profile</a>
+        <a id="logout" href="#">Logout</a>
     </div>
 </div>
 <div class="container">
@@ -165,9 +165,35 @@
     </div>
 </div>
 <script>
+    const apiKey = '<%= apiKey %>';
+    
     const url = 'http://localhost:3000/api/video-mpd';
     const player = dashjs.MediaPlayer().create();
     player.initialize(document.querySelector("#videoPlayer"), url, true);
+
+
+
+    document.getElementById('logout').addEventListener('click', function() {
+        let token = localStorage.getItem('jwtToken');
+        
+        fetch(`${apiKey}/api/logout`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`,
+          },
+        })
+          .then((response) => {
+            if(response.ok) {
+            localStorage.removeItem('jwtToken');
+              window.location.href = `${apiKey}/login`;
+            }
+            return response.json()
+          }).catch((error) => {
+            console.error("Error fetching user data:", error);
+          });
+    });
+
 </script>
 </body>
 </html>

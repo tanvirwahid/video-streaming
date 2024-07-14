@@ -17,6 +17,7 @@ router.get('/user', authMiddleware.verifyToken, async(req, res) => {
 
 router.post('/login', authMiddleware.guest, authController.login);
 router.post('/register', authMiddleware.guest, authController.register);
+router.post('/logout', authMiddleware.verifyToken, authController.logout);
 
 router.get('/demo-video', videoController.getDemoVideo);
 router.get('/video-mpd', dashMpdController.getFile);

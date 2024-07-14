@@ -77,8 +77,7 @@ const logout = async (req, res) => {
     const token = req.header('Authorization');
 
     const blacklistedToken = new BlacklistedToken({
-        token,
-        expiresAt
+        token
     });
 
     await blacklistedToken.save();
