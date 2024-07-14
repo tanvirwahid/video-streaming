@@ -3,50 +3,125 @@
   <head>
     <title>Register</title>
     <style>
-        body {
-          font-family: Arial, sans-serif;
-          background-color: #f4f4f4;
-          margin: 0;
-          padding: 0;
-        }
-        .container {
-          width: 80%;
-          margin: auto;
-          overflow: hidden;
-        }
-        button {
-          display: inline-block;
-          padding: 10px 20px;
-          font-size: 16px;
-          cursor: pointer;
-          border: none;
-          background-color: #333;
-          color: #fff;
-        }
-      </style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        width: 80%;
+        margin: auto;
+        overflow: hidden;
+      }
+      button {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        background-color: #333;
+        color: #fff;
+      }
+    </style>
   </head>
   <body>
-    <div class="container">
-        <h1>Register</h1>
-        <form action="/api/register" method="POST">
-            <div>
-                <label for="name">Name</label>
-                <input type="text" name="name" required>
-            </div>
-            <div>
-                <label for="email">Email</label>
-                <input type="email" name="email" required>
-            </div>
-            <div>
-                <label for="password">Password</label>
-                <input type="password" name="password" required>
-            </div>
-            <div>
-                <label for="password_confirmation">Confirm Password</label>
-                <input type="password" name="password_confirmation" required>
-            </div>
-            <button type="submit">Register</button>
-        </form>
+    <div class="container" id="container" style="visibility: hidden">
+      <h1>Register</h1>
+      <form action="#" method="POST" id="register-form">
+        <div>
+          <label for="name">Name</label>
+          <input type="text" name="name" required />
+        </div>
+        <div>
+          <label for="email">Email</label>
+          <input type="email" name="email" required />
+        </div>
+        <div>
+          <label for="password">Password</label>
+          <input type="password" name="password" required />
+        </div>
+        <div>
+          <label for="password_confirmation">Confirm Password</label>
+          <input type="password" name="password_confirmation" required />
+        </div>
+        <button type="button" id="submit-btn">Register</button>
+      </form>
     </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const token = localStorage.getItem("jwtToken");
+        const apiKey = "<%= apiKey %>";
+
+        fetch(`${apiKey}/api/user`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.status && data.status === 401) {
+              document.getElementById("container").style.visibility = "visible";
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching user data:", error);
+          });
+
+        document
+          .getElementById("submit-btn")
+          .addEventListener("click", function () {
+            const form = document.getElementById("register-form");
+            const formData = new FormData(form);
+
+            const data = {
+              name: formData.get("name"),
+              email: formData.get("email"),
+              password: formData.get("password"),
+              password_confirmation: formData.get("password_confirmation"),
+            };
+
+            if (!data.name || !data.email || !data.password || !data.password_confirmation) {
+              alert("Please fill in all fields.");
+              return;
+            }
+
+            fetch(`${apiKey}/api/register`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+              })
+              .then((data) => {
+                console.log("Registration successful:", data);
+                localStorage.setItem('jwtToken', data.token);
+                window.location.href = `${apiKey}/`;
+              })
+              .catch((error) => {
+                console.error("Error registering user:", error.message);
+
+                if (error.message.includes("status:")) {
+                  const statusCode = error.message.split("status: ")[1];
+                  alert(
+                    `Error: Failed to register user. Status code: ${statusCode}`
+                  );
+                } else {
+                  alert(
+                    "Error: Failed to register user. Network error or server is down."
+                  );
+                }
+              });
+          });
+      });
+    </script>
   </body>
 </html>

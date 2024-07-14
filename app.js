@@ -4,8 +4,14 @@ const port = 3000;
 const bodyParser = require('body-parser');
 const routes = require('./routes/index');
 const path = require('path');
+const mongoose = require('mongoose');
+const keys = require('./app/config/keys');
 
 const frontendController = require('./app/controllers/frontendController');
+
+mongoose.connect(keys.mongo_uri, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('MongoDB connected'))
+    .catch(err => console.error(err));
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));

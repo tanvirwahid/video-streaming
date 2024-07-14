@@ -1,4 +1,6 @@
+require('dotenv').config();
+
 module.exports = {
-    MongoURI: 'mongodb://localhost:27017/video_streaming',
-    JWT_SECRET: 'add-key'
+    mongo_uri: process.env.MONGO_URI,
+    jwt_secret: process.env.JWT_SECRET
 };
