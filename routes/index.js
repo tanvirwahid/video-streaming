@@ -19,6 +19,8 @@ router.post('/login', authMiddleware.guest, authController.login);
 router.post('/register', authMiddleware.guest, authController.register);
 router.post('/logout', authMiddleware.verifyToken, authController.logout);
 
+router.use(authMiddleware.verifyToken);
+
 router.get('/demo-video', videoController.getDemoVideo);
 router.get('/video-mpd', dashMpdController.getFile);
 router.get('/video/:segment', dashMpdController.getSegment);

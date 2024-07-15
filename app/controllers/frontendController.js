@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 const upload = async (request, response) => {
-    return response.render('upload');
+    return response.render('upload', {apiKey: process.env.APP_URL});
 }
 
 const play = async (request, response) => {

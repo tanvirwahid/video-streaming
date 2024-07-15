@@ -25,10 +25,10 @@
       }
     </style>
   </head>
-  <body>
+  <body id="container">
     <div class="container">
       <h1>Login</h1>
-      <form action="#" method="POST">
+      <form action="#" id="login-form" method="POST">
         <div>
           <label for="email">Email</label>
           <input type="email" name="email" required />
@@ -37,8 +37,94 @@
           <label for="password">Password</label>
           <input type="password" name="password" required />
         </div>
-        <button type="submit">Login</button>
+        <button type="button" id="submit-btn">Login</button>
       </form>
     </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const token = localStorage.getItem("jwtToken");
+        const apiKey = "<%= apiKey %>";
+
+        fetch(`${apiKey}/api/user`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`,
+          },
+        })
+          .then((response) => {
+
+            console.log(response.ok);
+
+            if(response.ok) {
+              window.location.href = `${apiKey}/`;
+            }
+            return response.json()
+          })
+          .then((data) => {
+            if (data.status && data.status === 401) {
+              document.getElementById("container").style.visibility = "visible";
+            }
+            
+          })
+          .catch((error) => {
+            console.error("Error fetching user data:", error);
+          });
+
+          document
+          .getElementById("submit-btn")
+          .addEventListener("click", function () {
+            const form = document.getElementById("login-form");
+            const formData = new FormData(form);
+
+            const data = {
+              email: formData.get("email"),
+              password: formData.get("password"),
+            };
+
+            if (!data.email || !data.password) {
+              alert("Please fill in all fields.");
+              return;
+            }
+
+            fetch(`${apiKey}/api/login`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+              })
+              .then((data) => {
+                console.log("Login successful:", data);
+                localStorage.setItem('jwtToken', data.token);
+                window.location.href = `${apiKey}/`;
+              })
+              .catch((error) => {
+                console.error("Error:", error.message);
+
+                if (error.message.includes("status:")) {
+                  const statusCode = error.message.split("status: ")[1];
+                  alert(
+                    `Error: Failed to log in. Status code: ${statusCode}`
+                  );
+                } else {
+                  alert(
+                    "Error: Failed to log in. Network error or server is down."
+                  );
+                }
+              });
+          });
+
+      });
+
+    </script>
+
   </body>
 </html>
